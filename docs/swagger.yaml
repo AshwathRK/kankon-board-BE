@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  title: User Authentication API
+  version: 1.0.0
+  description: Endpoints for user login, signup, and session management.
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /api/:
+    post:
+      summary: Login a user
+      description: Authenticates a user and sets auth tokens in cookies.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Successfully logged in
+        400:
+          description: Missing credentials
+        401:
+          description: Invalid email or password
+        500:
+          description: Internal server error
+
+    get:
+      summary: Get login status
+      description: Returns user data if access token is valid.
+      responses:
+        200:
+          description: Authorized user
+        401:
+          description: Unauthorized user
+
+  /api/signup:
+    post:
+      summary: Register a new user
+      description: Creates a new user account with validation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fullname
+                - email
+                - phonenumber
+                - password
+                - confirmpassword
+                - securityQuestion
+                - securityAnswer
+              properties:
+                fullname:
+                  type: string
+                email:
+                  type: string
+                phonenumber:
+                  type: string
+                password:
+                  type: string
+                confirmpassword:
+                  type: string
+                securityQuestion:
+                  type: string
+                securityAnswer:
+                  type: string
+                dateofbirth:
+                  type: string
+                  format: date
+                gender:
+                  type: string
+                streetaddress:
+                  type: string
+                city:
+                  type: string
+                State:
+                  type: string
+                Postal:
+                  type: string
+                Country:
+                  type: string
+      responses:
+        200:
+          description: User registered successfully
+        400:
+          description: Missing or mismatched fields
+        409:
+          description: Email already exists
+        422:
+          description: Password validation failed
+        500:
+          description: Internal server error
+
+    get:
+      summary: Get signup status
+      description: Returns user data if access token is valid.
+      responses:
+        200:
+          description: Authorized user
+        401:
+          description: Unauthorized user
+
+  /api/user:
+    get:
+      summary: Get authenticated user details
+      description: Retrieves user details using token in cookies.
+      responses:
+        200:
+          description: Authenticated user data
+        404:
+          description: User not found or not authenticated
+
+  /api/logout:
+    get:
+      summary: Logout the user
+      description: Clears authentication cookies and logs out the user.
+      responses:
+        200:
+          description: Logged out successfully
+
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
+
+security:
+  - CookieAuth: []
