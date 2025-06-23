@@ -5,23 +5,29 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
 const handleGetLogin = async (req, res, next) => {
-    if (!req.user) {
-        return res.status(401).json(
-            {
-                status: false,
-                message: "Unauthorized user"
-            }
-        )
-    }
+    try {
+        if (!req.user || !req.user.email) {
+            return res.status(401).json({ status: false, message: "Unauthorized access" });
+        }
 
-    let useremail = req.user.email
-    console.log(useremail)
-    const user = await User.findOne({ email: useremail });
-    return res.status(200).json({
-        status: true,
-        message: "authorized user",
-        user
-    })
+        const user = await User.findOne({ email: req.user.email }).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ status: false, message: "User not found" });
+        }
+        return res.status(200).json({
+            status: true,
+            message: "User authenticated",
+            user,
+        });
+    } catch (error) {
+        console.error("Error in getUserDetails:", error);
+        return res.status(500).json({
+            status: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
 }
 
 const handlePostLogin = async (req, res, next) => {
@@ -58,12 +64,13 @@ const handlePostLogin = async (req, res, next) => {
             deviceId
         );
 
+        // console.log(req.cookie)
         return res
             .status(200)
             .cookie('accessToken', accessToken, {
                 httpOnly: true,
-                secure: true,            
-                sameSite: 'None',        
+                secure: true,
+                sameSite: 'None',
                 maxAge: 15 * 60 * 1000,
             })
             .cookie('refreshToken', refreshToken, {
@@ -191,32 +198,32 @@ const handlePostSignUp = async (req, res, next) => {
     }
 };
 
+
 const getUserDetails = async (req, res) => {
-  try {
-    if (!req.user || !req.user.email) {
-      return res.status(401).json({ status: false, message: "Unauthorized access" });
+    try {
+        if (!req.user || !req.user.email) {
+            return res.status(401).json({ status: false, message: "Unauthorized access" });
+        }
+
+        const user = await User.findOne({ email: req.user.email }).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ status: false, message: "User not found" });
+        }
+        return res.status(200).json({
+            status: true,
+            message: "User authenticated",
+            user,
+        });
+    } catch (error) {
+        console.error("Error in getUserDetails:", error);
+        return res.status(500).json({
+            status: false,
+            message: "Server error",
+            error: error.message,
+        });
     }
-
-    const user = await User.findOne({ email: req.user.email }).select("-password");
-
-    if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
-    }
-
-    return res.status(200).json({
-      status: true,
-      message: "User authenticated",
-      user,
-    });
-  } catch (error) {
-    console.error("Error in getUserDetails:", error);
-    return res.status(500).json({
-      status: false,
-      message: "Server error",
-    });
-  }
 };
-
 
 const logoutUser = (req, res, next) => {
     res.clearCookie('accessToken');

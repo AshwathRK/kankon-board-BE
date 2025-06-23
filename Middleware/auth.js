@@ -1,13 +1,12 @@
 const { verifyAccessToken } = require('../utill');
 
 const verifyTokenfromCookies = (req, res, next) => {
-
+    
     if (req.method === 'OPTIONS') {
         return res.sendStatus(204);
     }
     const token = req.cookies.accessToken;
 
-    console.log(token)
     if (!token) {
         return next(); // Proceed without user if no token
     }
