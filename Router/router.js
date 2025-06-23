@@ -14,7 +14,7 @@ const {
   sendResetOtp
 } = require('../Controller/passwordreset');
 
-const {handleGetAllProjects, handleCreateProject, handleUpdateProject, handleDeleteProject} = require('../Controller/project')
+const {handleGetAllProjectsbyuser, handleCreateProject, handleUpdateProject, handleDeleteProject} = require('../Controller/project')
 
 const { getAllToDoTaskData, getAllinprogressTaskData, getAllDoneTaskData, handleCreateTaskData } = require('../Controller/taskdata');
 const verifyTokenfromCookies = require('../Middleware/auth');
@@ -36,16 +36,16 @@ router.post('/verifyotp', verifyOtp);
 router.post('/resetpassword', resetPassword);
 
 // Project creation
-router.get('/projects', handleGetAllProjects);
+router.get('/projects/:userID', handleGetAllProjectsbyuser);
 router.post('/projects', handleCreateProject);
-router.patch('/projects/:id', handleUpdateProject);
+router.put('/projects/:id', handleUpdateProject);
 router.delete('/projects/:id', handleDeleteProject);
 
 
 // Task routes
-router.get('/task/:projectId', getAllToDoTaskData);
-router.get('/getinprogressTask', getAllinprogressTaskData);
-router.get('/getDoneTask', getAllDoneTaskData);
+router.get('/todotask/:projectId', getAllToDoTaskData);
+router.get('/inprogressTask/:projectId', getAllinprogressTaskData);
+router.get('/doneTask/:projectId', getAllDoneTaskData);
 router.post('/createTask', handleCreateTaskData);
 
 // 404 handler

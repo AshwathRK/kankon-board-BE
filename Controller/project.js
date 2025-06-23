@@ -1,18 +1,16 @@
 const Projects = require('../Model/Project');
 
-const handleGetAllProjects = async (req, res, next) => {
+const handleGetAllProjectsbyuser = async (req, res, next) => {
     try {
-        const projects = await Projects.find();
 
-        if (!projects || projects.length === 0) {
-            return res.status(404).json({
-                message: "No data found"
-            });
-        }
+        const userID = req.params?.userID;
+        const projects = await Projects.find({
+            userID
+        });
 
         return res.status(200).json({
             message: "Projects are fetched successfully",
-            projects
+            projects: projects?projects:{}
         });
     } catch (error) {
         console.error("Error fetching projects:", error);
@@ -26,11 +24,12 @@ const handleCreateProject = async (req, res, next) => {
     try {
         const {
             title,
-            description
+            description,
+            userID
         } = req.body;
 
         // Required field check
-        const requiredFields = { title, description };
+        const requiredFields = { title, description, userID };
         for (const [key, value] of Object.entries(requiredFields)) {
             if (!value) {
                 return res.status(400).json({
@@ -43,7 +42,8 @@ const handleCreateProject = async (req, res, next) => {
         // Create task
         const newProject = await Projects.create({
             title,
-            description
+            description,
+            userID
         });
 
         // Respond with created task
@@ -158,5 +158,5 @@ const handleDeleteProject = async (req, res, next) => {
 }
 
 module.exports = {
-    handleGetAllProjects, handleCreateProject, handleUpdateProject, handleDeleteProject
+    handleGetAllProjectsbyuser, handleCreateProject, handleUpdateProject, handleDeleteProject
 };

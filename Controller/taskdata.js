@@ -2,13 +2,11 @@ const Task = require('../Model/taskdata');
 
 const getAllToDoTaskData = async (req, res, next) => {
     try {
-        const projectId = req.params.projectId;
+        const projectId = req.params?.projectId;
         const todo = await Task.find({
             projectId: projectId,
             status: "todo"
         })
-
-        console.log(todo)
 
         if (!todo || todo.length === 0) {
             return res.status(404).json({
@@ -29,7 +27,12 @@ const getAllToDoTaskData = async (req, res, next) => {
 
 const getAllinprogressTaskData = async (req, res, next) => {
     try {
-        const inprogress = await Task.find({ status: "inprogress" })
+        const projectId = req.params?.projectId;
+        const inprogress = await Task.find({
+            projectId: projectId,
+            status: "inprogress"
+        })
+
         if (!inprogress || inprogress.length === 0) {
             return res.status(404).json({
                 message: "No data found"
@@ -40,6 +43,7 @@ const getAllinprogressTaskData = async (req, res, next) => {
             inprogress
         })
     } catch (error) {
+        console.error("Error fetching inprogress:", error);
         return res.status(500).json({
             message: "Something went wrong!",
         })
@@ -48,7 +52,12 @@ const getAllinprogressTaskData = async (req, res, next) => {
 
 const getAllDoneTaskData = async (req, res, next) => {
     try {
-        const done = await Task.find({ status: "done" })
+        const projectId = req.params?.projectId;
+        const done = await Task.find({
+            projectId: projectId,
+            status: "done"
+        })
+
         if (!done || done.length === 0) {
             return res.status(404).json({
                 message: "No data found"
@@ -59,6 +68,7 @@ const getAllDoneTaskData = async (req, res, next) => {
             done
         })
     } catch (error) {
+        console.error("Error fetching done:", error);
         return res.status(500).json({
             message: "Something went wrong!",
         })
@@ -72,12 +82,13 @@ const handleCreateTaskData = async (req, res, next) => {
             description,
             status = "todo",
             userId,
+            projectId,
             dueDate,
             priority = "medium"
         } = req.body;
 
         // Required field check
-        const requiredFields = { title, description, userId, dueDate };
+        const requiredFields = { title, description, userId, projectId, dueDate };
         for (const [key, value] of Object.entries(requiredFields)) {
             if (!value) {
                 return res.status(400).json({
@@ -93,6 +104,7 @@ const handleCreateTaskData = async (req, res, next) => {
             description,
             status,
             userId,
+            projectId,
             dueDate,
             priority,
         });

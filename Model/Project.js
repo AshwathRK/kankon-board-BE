@@ -8,7 +8,11 @@ const projectSchema = new mongoose.Schema({
     description:{
         type: String,
         required: true
-    }
+    },
+    userID: {
+        type: String,
+        required: true
+    },
 })
 
 const Project = mongoose.model('projectlist', projectSchema, );
