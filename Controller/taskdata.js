@@ -1,74 +1,23 @@
 const Task = require('../Model/taskdata');
 
-const getAllToDoTaskData = async (req, res, next) => {
+const getAllTaskData = async (req, res, next) => {
     try {
         const projectId = req.params?.projectId;
-        const todo = await Task.find({
+        const allTasks = await Task.find({
             projectId: projectId,
-            status: "todo"
         })
 
-        if (!todo || todo.length === 0) {
+        if (!allTasks || allTasks.length === 0) {
             return res.status(404).json({
                 message: "No data found"
             })
         }
         return res.status(200).json({
             message: "Data fetched successfully",
-            todo
+            allTasks
         })
     } catch (error) {
-        console.error("Error fetching todos:", error);
-        return res.status(500).json({
-            message: "Something went wrong!",
-        })
-    }
-}
-
-const getAllinprogressTaskData = async (req, res, next) => {
-    try {
-        const projectId = req.params?.projectId;
-        const inprogress = await Task.find({
-            projectId: projectId,
-            status: "inprogress"
-        })
-
-        if (!inprogress || inprogress.length === 0) {
-            return res.status(404).json({
-                message: "No data found"
-            })
-        }
-        return res.status(200).json({
-            message: "Data fetched successfully",
-            inprogress
-        })
-    } catch (error) {
-        console.error("Error fetching inprogress:", error);
-        return res.status(500).json({
-            message: "Something went wrong!",
-        })
-    }
-}
-
-const getAllDoneTaskData = async (req, res, next) => {
-    try {
-        const projectId = req.params?.projectId;
-        const done = await Task.find({
-            projectId: projectId,
-            status: "done"
-        })
-
-        if (!done || done.length === 0) {
-            return res.status(404).json({
-                message: "No data found"
-            })
-        }
-        return res.status(200).json({
-            message: "Data fetched successfully",
-            done
-        })
-    } catch (error) {
-        console.error("Error fetching done:", error);
+        console.error("Error fetching all the Tasks:", error);
         return res.status(500).json({
             message: "Something went wrong!",
         })
@@ -88,7 +37,7 @@ const handleCreateTaskData = async (req, res, next) => {
         } = req.body;
 
         // Required field check
-        const requiredFields = { title, description, userId, projectId, dueDate };
+        const requiredFields = { title, description, projectId, dueDate };
         for (const [key, value] of Object.entries(requiredFields)) {
             if (!value) {
                 return res.status(400).json({
@@ -125,6 +74,94 @@ const handleCreateTaskData = async (req, res, next) => {
     }
 };
 
+const handleUpdateTaskData = async (req, res, next) => {
+  try {
+    const { taskId } = req.params;
+    const {
+      title,
+      description,
+      status,
+      userId,
+      projectId,
+      dueDate,
+      priority
+    } = req.body;
+
+    // Find task by ID
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found.",
+      });
+    }
+
+    // Update task fields
+    if (title) task.title = title;
+    if (description) task.description = description;
+    if (status) task.status = status;
+    if (userId) task.userId = userId;
+    if (projectId) task.projectId = projectId;
+    if (dueDate) task.dueDate = dueDate;
+    if (priority) task.priority = priority;
+
+    // Save updated task
+    const updatedTask = await task.save();
+
+    // Respond with updated task
+    return res.status(200).json({
+      status: true,
+      message: "Task updated successfully.",
+      task: updatedTask,
+    });
+
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return res.status(500).json({
+      status: false,
+      message: "An internal server error occurred.",
+    });
+  }
+};
+
+const handleDeleteTask = async (req, res, next) => {
+  try {
+    const { taskId } = req.params;
+
+    // Check if taskId is provided
+    if (!taskId) {
+      return res.status(400).json({
+        status: false,
+        message: "Task ID is required.",
+      });
+    }
+
+    // Find and delete task
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+
+    // Check if task exists
+    if (!deletedTask) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found.",
+      });
+    }
+
+    // Respond with success message
+    return res.status(200).json({
+      status: true,
+      message: "Task deleted successfully.",
+    });
+
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    return res.status(500).json({
+      status: false,
+      message: "An internal server error occurred.",
+    });
+  }
+};
+
 module.exports = {
-    getAllToDoTaskData, getAllinprogressTaskData, getAllDoneTaskData, handleCreateTaskData
+    getAllTaskData, handleCreateTaskData, handleUpdateTaskData, handleDeleteTask
 };

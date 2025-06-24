@@ -11,12 +11,10 @@ const taskschema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['todo', 'inprogress', 'done'],
         default: 'todo'
     },
     userId: {
         type: String,
-        required: true
     },
     projectId: {
         type: String,
@@ -28,7 +26,7 @@ const taskschema = new mongoose.Schema({
     },
     priority	: {
         type: String,
-        enum: ['low', 'medium', 'high'],
+        enum: ['Low', 'Medium', 'High'],
         default: 'low'
     },
 }, { timestamps: true });

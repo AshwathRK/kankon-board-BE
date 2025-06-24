@@ -15,8 +15,8 @@ const {
 } = require('../Controller/passwordreset');
 
 const {handleGetAllProjectsbyuser, handleCreateProject, handleUpdateProject, handleDeleteProject} = require('../Controller/project')
-
-const { getAllToDoTaskData, getAllinprogressTaskData, getAllDoneTaskData, handleCreateTaskData } = require('../Controller/taskdata');
+const { getAllTaskData, handleCreateTaskData, handleUpdateTaskData, handleDeleteTask } = require('../Controller/taskdata');
+const {handleGetStatus, handleCreateStatus, handleUpdateStatus, handleDeleteStatus} = require('../Controller/status')
 const verifyTokenfromCookies = require('../Middleware/auth');
 
 
@@ -41,12 +41,18 @@ router.post('/projects', handleCreateProject);
 router.put('/projects/:id', handleUpdateProject);
 router.delete('/projects/:id', handleDeleteProject);
 
+// Status routes
+router.get('/status/:projectId', handleGetStatus); 
+router.post('/status', handleCreateStatus);
+router.put('/status/:id', handleUpdateStatus);
+router.delete('/status/:id', handleDeleteStatus);
 
 // Task routes
-router.get('/todotask/:projectId', getAllToDoTaskData);
-router.get('/inprogressTask/:projectId', getAllinprogressTaskData);
-router.get('/doneTask/:projectId', getAllDoneTaskData);
+router.get('/alltask/:projectId', getAllTaskData);
 router.post('/createTask', handleCreateTaskData);
+router.patch('/tasks/:taskId', handleUpdateTaskData);
+router.delete('/tasks/:taskId', handleDeleteTask);
+
 
 // 404 handler
 router.use((req, res, next) => {
