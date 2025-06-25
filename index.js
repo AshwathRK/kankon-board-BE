@@ -20,11 +20,12 @@ HTTP_Server.use(cookieParser());
 const allowedOrigins = [
     'http://localhost:5173',
     'https://userpasswordreset.netlify.app',
-    'https://app-kanbanboard.netlify.app/'
+    'https://app-kanbanboard.netlify.app'
 ];
 
 const corsOptions = {
     origin: function (origin, callback) {
+        console.log('Origin:', origin); // Log the origin
         // Allow requests with no origin (like mobile apps or curl)
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
