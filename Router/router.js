@@ -5,6 +5,7 @@ const {
   handlePostLogin,
   handlePostSignUp,
   getUserDetails,
+  handleUpdateUser,
   logoutUser
 } = require('../Controller/userregister');
 
@@ -28,6 +29,7 @@ router.post('/', handlePostLogin);
 router.get('/signup', handleGetSignUp);
 router.post('/signup', handlePostSignUp);
 router.get('/user', verifyTokenfromCookies, getUserDetails);
+router.patch('/user', verifyTokenfromCookies, handleUpdateUser);
 router.get('/logout', logoutUser);
 
 // Password Reset routes
@@ -44,7 +46,7 @@ router.delete('/projects/:id', handleDeleteProject);
 // Status routes
 router.get('/status/:projectId', handleGetStatus); 
 router.post('/status', handleCreateStatus);
-router.put('/status/:id', handleUpdateStatus);
+router.patch('/status/:id', handleUpdateStatus);
 router.delete('/status/:id', handleDeleteStatus);
 
 // Task routes

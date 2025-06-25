@@ -225,6 +225,60 @@ const getUserDetails = async (req, res) => {
     }
 };
 
+const handleUpdateUser = async (req, res, next) => {
+    try {
+        const userId = req.user.id; // Assuming you have user authentication middleware
+        const {
+            fullname, phonenumber, dateofbirth, gender, streetaddress, city, State, Postal, Country
+        } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                status: false,
+                message: "User not found."
+            });
+        }
+
+        // Update user fields
+        user.fullname = fullname || user.fullname;
+        user.phonenumber = phonenumber || user.phonenumber;
+        user.dateofbirth = dateofbirth ? new Date(dateofbirth) : user.dateofbirth;
+        user.gender = gender || user.gender;
+        user.streetaddress = streetaddress || user.streetaddress;
+        user.city = city || user.city;
+        user.State = State || user.State;
+        user.Postal = Postal || user.Postal;
+        user.Country = Country || user.Country;
+
+        await user.save();
+
+        return res.status(200).json({
+            status: true,
+            message: "User updated successfully.",
+            user: {
+                fullname: user.fullname,
+                email: user.email,
+                phonenumber: user.phonenumber,
+                dateofbirth: user.dateofbirth,
+                gender: user.gender,
+                streetaddress: user.streetaddress,
+                city: user.city,
+                State: user.State,
+                Postal: user.Postal,
+                Country: user.Country
+            }
+        });
+
+    } catch (error) {
+        console.error("Update user error:", error);
+        return res.status(500).json({
+            status: false,
+            message: "An internal server error occurred."
+        });
+    }
+};
+
 const logoutUser = (req, res, next) => {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
@@ -238,5 +292,5 @@ const logoutUser = (req, res, next) => {
 }
 
 module.exports = {
-    handleGetLogin, handlePostLogin, handleGetSignUp, handlePostSignUp, getUserDetails, logoutUser
+    handleGetLogin, handlePostLogin, handleGetSignUp, handlePostSignUp, getUserDetails, handleUpdateUser, logoutUser
 };

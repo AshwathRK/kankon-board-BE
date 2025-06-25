@@ -9,7 +9,7 @@ const handleGetStatus = async (req, res, next) => {
         })
         return res.status(200).json({
             message: "Status fetched successfully",
-            getStatus: getStatus? getStatus: []
+            getStatus: getStatus ? getStatus : []
         })
     } catch (error) {
         console.error("Error fetching statues:", error);
@@ -64,9 +64,9 @@ const handleUpdateStatus = async (req, res, next) => {
 
         const updatedStatus = await Status.findByIdAndUpdate(id, {
             $set: {
-                status: status || existingStatus.status,
-                description: description || existingStatus.description,
-                projectId: projectId || existingStatus.projectId,
+                status,
+                description,
+                projectId,
             }
         }, { new: true });
 
@@ -81,7 +81,7 @@ const handleUpdateStatus = async (req, res, next) => {
         return res.status(200).json({
             status: true,
             message: "Status updated successfully.",
-            status: updatedStatus
+            getStatus: updatedStatus
         });
     } catch (error) {
         console.error("Error updating status:", error);
