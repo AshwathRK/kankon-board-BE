@@ -19,7 +19,8 @@ HTTP_Server.use(cookieParser());
 // ✅ Enable CORS for both localhost and Netlify
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://userpasswordreset.netlify.app'
+    'https://userpasswordreset.netlify.app',
+    'https://app-kanbanboard.netlify.app/'
 ];
 
 const corsOptions = {
