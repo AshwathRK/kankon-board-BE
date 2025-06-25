@@ -25,7 +25,7 @@ const allowedOrigins = [
 
 const corsOptions = {
     origin: function (origin, callback) {
-        console.log('Origin:', origin); // Log the origin
+        // console.log('Origin:', origin); // Log the origin
         // Allow requests with no origin (like mobile apps or curl)
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
