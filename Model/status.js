@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const statusSchema = new mongoose.Schema({
     status: {
         type: String,
-        required: true
+        required: true,
     },
     description: {
         type: String,
